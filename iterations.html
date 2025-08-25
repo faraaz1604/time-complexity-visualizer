@@ -84,14 +84,24 @@
         }
         
         .code-section {
-            background: #f7fafc;
+            background: #1e1e1e;
             border-radius: 10px;
-            padding: 15px;
+            padding: 20px;
             margin: 15px 0;
-            font-family: 'Courier New', monospace;
-            font-size: 0.9em;
-            border: 1px solid #e2e8f0;
+            font-family: 'Fira Code', 'Courier New', monospace;
+            font-size: 0.95em;
+            border: 1px solid #333;
+            color: #f8f8f2;
+            line-height: 1.6;
+            overflow-x: auto;
+            white-space: pre-wrap;
         }
+        
+        .code-section .keyword { color: #ff79c6; font-weight: bold; }
+        .code-section .string { color: #f1fa8c; }
+        .code-section .comment { color: #6272a4; font-style: italic; }
+        .code-section .number { color: #bd93f9; }
+        .code-section .method { color: #50fa7b; }
         
         .iterations-container {
             background: #fff5f5;
@@ -275,8 +285,8 @@
             constant: {
                 name: "O(1) - Constant Time",
                 description: "Array access by index - always 1 operation",
-                code: `public int getElement(int[] arr, int index) {
-    return arr[index];  // Direct access - always O(1)
+                code: `<span class="keyword">public int</span> <span class="method">getElement</span>(<span class="keyword">int</span>[] arr, <span class="keyword">int</span> index) {
+    <span class="keyword">return</span> arr[index];  <span class="comment">// Direct access - always O(1)</span>
 }`,
                 execute: function(n) {
                     const arr = Array.from({length: n}, (_, i) => i * 2 + 1);
@@ -304,15 +314,21 @@
             logarithmic: {
                 name: "O(log n) - Logarithmic Time",
                 description: "Binary search - divides search space in half each step",
-                code: `public int binarySearch(int[] arr, int target) {
-    int left = 0, right = arr.length - 1;
-    while (left <= right) {
-        int mid = (left + right) / 2;
-        if (arr[mid] == target) return mid;
-        if (arr[mid] < target) left = mid + 1;
-        else right = mid - 1;
+                code: `<span class="keyword">public int</span> <span class="method">binarySearch</span>(<span class="keyword">int</span>[] arr, <span class="keyword">int</span> target) {
+    <span class="keyword">int</span> left = <span class="number">0</span>, right = arr.length - <span class="number">1</span>;
+    
+    <span class="keyword">while</span> (left &lt;= right) {
+        <span class="keyword">int</span> mid = (left + right) / <span class="number">2</span>;
+        
+        <span class="keyword">if</span> (arr[mid] == target) 
+            <span class="keyword">return</span> mid;
+            
+        <span class="keyword">if</span> (arr[mid] &lt; target) 
+            left = mid + <span class="number">1</span>;
+        <span class="keyword">else</span> 
+            right = mid - <span class="number">1</span>;
     }
-    return -1;
+    <span class="keyword">return</span> -<span class="number">1</span>;
 }`,
                 execute: function(n) {
                     const arr = Array.from({length: n}, (_, i) => i * 2 + 1);
@@ -360,13 +376,13 @@
             linear: {
                 name: "O(n) - Linear Time",
                 description: "Linear search - check each element once",
-                code: `public int linearSearch(int[] arr, int target) {
-    for (int i = 0; i < arr.length; i++) {
-        if (arr[i] == target) {
-            return i;
+                code: `<span class="keyword">public int</span> <span class="method">linearSearch</span>(<span class="keyword">int</span>[] arr, <span class="keyword">int</span> target) {
+    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; arr.length; i++) {
+        <span class="keyword">if</span> (arr[i] == target) {
+            <span class="keyword">return</span> i;
         }
     }
-    return -1;
+    <span class="keyword">return</span> -<span class="number">1</span>;
 }`,
                 execute: function(n) {
                     const arr = Array.from({length: n}, (_, i) => i * 3 + 2);
@@ -405,12 +421,13 @@
             linearithmic: {
                 name: "O(n log n) - Linearithmic Time",
                 description: "Merge sort - divide and conquer approach",
-                code: `public void mergeSort(int[] arr, int left, int right) {
-    if (left < right) {
-        int mid = (left + right) / 2;
-        mergeSort(arr, left, mid);
-        mergeSort(arr, mid + 1, right);
-        merge(arr, left, mid, right);
+                code: `<span class="keyword">public void</span> <span class="method">mergeSort</span>(<span class="keyword">int</span>[] arr, <span class="keyword">int</span> left, <span class="keyword">int</span> right) {
+    <span class="keyword">if</span> (left &lt; right) {
+        <span class="keyword">int</span> mid = (left + right) / <span class="number">2</span>;
+        
+        <span class="method">mergeSort</span>(arr, left, mid);
+        <span class="method">mergeSort</span>(arr, mid + <span class="number">1</span>, right);
+        <span class="method">merge</span>(arr, left, mid, right);
     }
 }`,
                 execute: function(n) {
@@ -489,14 +506,14 @@
             quadratic: {
                 name: "O(n²) - Quadratic Time",
                 description: "Bubble sort - nested loops comparing adjacent elements",
-                code: `public void bubbleSort(int[] arr) {
-    for (int i = 0; i < arr.length - 1; i++) {
-        for (int j = 0; j < arr.length - i - 1; j++) {
-            if (arr[j] > arr[j + 1]) {
-                // Swap elements
-                int temp = arr[j];
-                arr[j] = arr[j + 1];
-                arr[j + 1] = temp;
+                code: `<span class="keyword">public void</span> <span class="method">bubbleSort</span>(<span class="keyword">int</span>[] arr) {
+    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; arr.length - <span class="number">1</span>; i++) {
+        <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; arr.length - i - <span class="number">1</span>; j++) {
+            <span class="keyword">if</span> (arr[j] &gt; arr[j + <span class="number">1</span>]) {
+                <span class="comment">// Swap elements</span>
+                <span class="keyword">int</span> temp = arr[j];
+                arr[j] = arr[j + <span class="number">1</span>];
+                arr[j + <span class="number">1</span>] = temp;
             }
         }
     }
@@ -542,9 +559,11 @@
             exponential: {
                 name: "O(2ⁿ) - Exponential Time",
                 description: "Fibonacci recursion - each call creates 2 more calls",
-                code: `public int fibonacci(int n) {
-    if (n <= 1) return n;
-    return fibonacci(n - 1) + fibonacci(n - 2);
+                code: `<span class="keyword">public int</span> <span class="method">fibonacci</span>(<span class="keyword">int</span> n) {
+    <span class="keyword">if</span> (n &lt;= <span class="number">1</span>) 
+        <span class="keyword">return</span> n;
+        
+    <span class="keyword">return</span> <span class="method">fibonacci</span>(n - <span class="number">1</span>) + <span class="method">fibonacci</span>(n - <span class="number">2</span>);
 }`,
                 execute: function(n) {
                     const maxN = Math.min(n, 6); // Limit to prevent browser freeze
