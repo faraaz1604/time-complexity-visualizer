@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time Complexity Iterations Demo</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #4a5568;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+        
+        .input-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .input-group input, .input-group select {
+            padding: 10px;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            font-size: 1em;
+        }
+        
+        .demo-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+        
+        .demo-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .complexity-demo {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            border-left: 5px solid #667eea;
+        }
+        
+        .complexity-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #4a5568;
+            margin-bottom: 15px;
+        }
+        
+        .code-section {
+            background: #f7fafc;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .iterations-container {
+            background: #fff5f5;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+            border: 1px solid #fed7d7;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .iteration {
+            display: flex;
+            align-items: center;
+            padding: 8px 12px;
+            margin: 5px 0;
+            background: white;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+        
+        .iteration.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        .iteration-number {
+            background: #667eea;
+            color: white;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8em;
+            font-weight: bold;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+        
+        .iteration-content {
+            flex: 1;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+        }
+        
+        .result-section {
+            background: #f0fff4;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+            border: 1px solid #9ae6b4;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+        
+        .highlight {
+            background: #fef5e7 !important;
+            border-left-color: #f6ad55 !important;
+        }
+        
+        .speed-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .speed-slider {
+            flex: 1;
+            max-width: 200px;
+        }
+        
+        .array-visualization {
+            display: flex;
+            gap: 5px;
+            margin: 10px 0;
+            flex-wrap: wrap;
+        }
+        
+        .array-element {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #e2e8f0;
+            border: 2px solid #cbd5e0;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .array-element.active {
+            background: #667eea;
+            color: white;
+            transform: scale(1.1);
+        }
+        
+        .array-element.compared {
+            background: #f6ad55;
+            color: white;
+        }
+        
+        .array-element.found {
+            background: #48bb78;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Time Complexity Step-by-Step Iterations</h1>
+        
+        <div class="controls">
+            <div class="input-group">
+                <label>Input Size (n):</label>
+                <input type="number" id="inputSize" value="8" min="3" max="10">
+            </div>
+            <div class="input-group">
+                <label>Algorithm:</label>
+                <select id="algorithmSelect">
+                    <option value="constant">O(1) - Array Access</option>
+                    <option value="logarithmic">O(log n) - Binary Search</option>
+                    <option value="linear">O(n) - Linear Search</option>
+                    <option value="linearithmic">O(n log n) - Merge Sort</option>
+                    <option value="quadratic">O(n²) - Bubble Sort</option>
+                    <option value="exponential">O(2ⁿ) - Fibonacci</option>
+                </select>
+            </div>
+            <button class="demo-button" onclick="runDemo()">▶️ Run Demo</button>
+            <button class="demo-button" onclick="resetDemo()">🔄 Reset</button>
+        </div>
+        
+        <div class="speed-controls">
+            <label>Animation Speed:</label>
+            <input type="range" class="speed-slider" id="speedSlider" min="100" max="2000" value="800">
+            <span id="speedDisplay">800ms</span>
+        </div>
+        
+        <div id="demoContainer"></div>
+    </div>
+
+    <script>
+        let currentDemo = null;
+        let animationSpeed = 800;
+        
+        document.getElementById('speedSlider').addEventListener('input', function() {
+            animationSpeed = parseInt(this.value);
+            document.getElementById('speedDisplay').textContent = animationSpeed + 'ms';
+        });
+
+        const algorithms = {
+            constant: {
+                name: "O(1) - Constant Time",
+                description: "Array access by index - always 1 operation",
+                code: `public int getElement(int[] arr, int index) {
+    return arr[index];  // Direct access - always O(1)
+}`,
+                execute: function(n) {
+                    const arr = Array.from({length: n}, (_, i) => i * 2 + 1);
+                    const targetIndex = 3;
+                    const iterations = [];
+                    
+                    iterations.push({
+                        step: 1,
+                        description: `Accessing arr[${targetIndex}] directly`,
+                        operation: `return arr[${targetIndex}]`,
+                        result: arr[targetIndex],
+                        array: arr,
+                        activeIndex: targetIndex
+                    });
+                    
+                    return {
+                        iterations,
+                        totalOperations: 1,
+                        result: arr[targetIndex],
+                        array: arr
+                    };
+                }
+            },
+            
+            logarithmic: {
+                name: "O(log n) - Logarithmic Time",
+                description: "Binary search - divides search space in half each step",
+                code: `public int binarySearch(int[] arr, int target) {
+    int left = 0, right = arr.length - 1;
+    while (left <= right) {
+        int mid = (left + right) / 2;
+        if (arr[mid] == target) return mid;
+        if (arr[mid] < target) left = mid + 1;
+        else right = mid - 1;
+    }
+    return -1;
+}`,
+                execute: function(n) {
+                    const arr = Array.from({length: n}, (_, i) => i * 2 + 1);
+                    const target = arr[Math.floor(n * 0.7)]; // Target near end
+                    const iterations = [];
+                    
+                    let left = 0, right = n - 1;
+                    let step = 1;
+                    
+                    while (left <= right) {
+                        const mid = Math.floor((left + right) / 2);
+                        iterations.push({
+                            step: step++,
+                            description: `Check middle: left=${left}, right=${right}, mid=${mid}`,
+                            operation: `arr[${mid}] = ${arr[mid]} ${arr[mid] === target ? '==' : arr[mid] < target ? '<' : '>'} ${target}`,
+                            result: arr[mid] === target ? `Found at index ${mid}` : arr[mid] < target ? 'Search right half' : 'Search left half',
+                            array: arr,
+                            activeIndex: mid,
+                            left: left,
+                            right: right
+                        });
+                        
+                        if (arr[mid] === target) {
+                            return {
+                                iterations,
+                                totalOperations: step - 1,
+                                result: mid,
+                                array: arr
+                            };
+                        }
+                        
+                        if (arr[mid] < target) left = mid + 1;
+                        else right = mid - 1;
+                    }
+                    
+                    return {
+                        iterations,
+                        totalOperations: step - 1,
+                        result: -1,
+                        array: arr
+                    };
+                }
+            },
+            
+            linear: {
+                name: "O(n) - Linear Time",
+                description: "Linear search - check each element once",
+                code: `public int linearSearch(int[] arr, int target) {
+    for (int i = 0; i < arr.length; i++) {
+        if (arr[i] == target) {
+            return i;
+        }
+    }
+    return -1;
+}`,
+                execute: function(n) {
+                    const arr = Array.from({length: n}, (_, i) => i * 3 + 2);
+                    const target = arr[Math.floor(n * 0.7)]; // Target near end
+                    const iterations = [];
+                    
+                    for (let i = 0; i < n; i++) {
+                        iterations.push({
+                            step: i + 1,
+                            description: `Checking element at index ${i}`,
+                            operation: `arr[${i}] = ${arr[i]} ${arr[i] === target ? '==' : '!='} ${target}`,
+                            result: arr[i] === target ? `Found at index ${i}` : 'Continue searching',
+                            array: arr,
+                            activeIndex: i
+                        });
+                        
+                        if (arr[i] === target) {
+                            return {
+                                iterations,
+                                totalOperations: i + 1,
+                                result: i,
+                                array: arr
+                            };
+                        }
+                    }
+                    
+                    return {
+                        iterations,
+                        totalOperations: n,
+                        result: -1,
+                        array: arr
+                    };
+                }
+            },
+            
+            linearithmic: {
+                name: "O(n log n) - Linearithmic Time",
+                description: "Merge sort - divide and conquer approach",
+                code: `public void mergeSort(int[] arr, int left, int right) {
+    if (left < right) {
+        int mid = (left + right) / 2;
+        mergeSort(arr, left, mid);
+        mergeSort(arr, mid + 1, right);
+        merge(arr, left, mid, right);
+    }
+}`,
+                execute: function(n) {
+                    const arr = [64, 34, 25, 12, 22, 11, 90, 88].slice(0, n);
+                    const iterations = [];
+                    let step = 1;
+                    
+                    function mergeSort(arr, left, right, depth = 0) {
+                        if (left < right) {
+                            const mid = Math.floor((left + right) / 2);
+                            
+                            iterations.push({
+                                step: step++,
+                                description: `Divide: [${left}..${right}] into [${left}..${mid}] and [${mid + 1}..${right}]`,
+                                operation: `Split array at position ${mid}`,
+                                result: `Left: ${arr.slice(left, mid + 1)}, Right: ${arr.slice(mid + 1, right + 1)}`,
+                                array: [...arr],
+                                activeRange: [left, right],
+                                depth: depth
+                            });
+                            
+                            mergeSort(arr, left, mid, depth + 1);
+                            mergeSort(arr, mid + 1, right, depth + 1);
+                            merge(arr, left, mid, right, depth);
+                        }
+                    }
+                    
+                    function merge(arr, left, mid, right, depth) {
+                        const leftArr = arr.slice(left, mid + 1);
+                        const rightArr = arr.slice(mid + 1, right + 1);
+                        
+                        iterations.push({
+                            step: step++,
+                            description: `Merge: [${leftArr}] and [${rightArr}]`,
+                            operation: `Merging sorted subarrays`,
+                            result: `Merging in progress...`,
+                            array: [...arr],
+                            activeRange: [left, right],
+                            depth: depth
+                        });
+                        
+                        let i = 0, j = 0, k = left;
+                        while (i < leftArr.length && j < rightArr.length) {
+                            if (leftArr[i] <= rightArr[j]) {
+                                arr[k++] = leftArr[i++];
+                            } else {
+                                arr[k++] = rightArr[j++];
+                            }
+                        }
+                        
+                        while (i < leftArr.length) arr[k++] = leftArr[i++];
+                        while (j < rightArr.length) arr[k++] = rightArr[j++];
+                        
+                        iterations.push({
+                            step: step++,
+                            description: `Merged result: [${arr.slice(left, right + 1)}]`,
+                            operation: `Merge complete`,
+                            result: `Sorted section: ${arr.slice(left, right + 1)}`,
+                            array: [...arr],
+                            activeRange: [left, right],
+                            depth: depth
+                        });
+                    }
+                    
+                    mergeSort(arr, 0, arr.length - 1);
+                    
+                    return {
+                        iterations,
+                        totalOperations: step - 1,
+                        result: arr,
+                        array: arr
+                    };
+                }
+            },
+            
+            quadratic: {
+                name: "O(n²) - Quadratic Time",
+                description: "Bubble sort - nested loops comparing adjacent elements",
+                code: `public void bubbleSort(int[] arr) {
+    for (int i = 0; i < arr.length - 1; i++) {
+        for (int j = 0; j < arr.length - i - 1; j++) {
+            if (arr[j] > arr[j + 1]) {
+                // Swap elements
+                int temp = arr[j];
+                arr[j] = arr[j + 1];
+                arr[j + 1] = temp;
+            }
+        }
+    }
+}`,
+                execute: function(n) {
+                    const arr = [64, 34, 25, 12, 22, 11, 90, 88].slice(0, n);
+                    const iterations = [];
+                    let step = 1;
+                    let swaps = 0;
+                    
+                    for (let i = 0; i < n - 1; i++) {
+                        for (let j = 0; j < n - i - 1; j++) {
+                            const swapped = arr[j] > arr[j + 1];
+                            
+                            iterations.push({
+                                step: step++,
+                                description: `Pass ${i + 1}: Compare arr[${j}] = ${arr[j]} with arr[${j + 1}] = ${arr[j + 1]}`,
+                                operation: swapped ? `${arr[j]} > ${arr[j + 1]} → Swap` : `${arr[j]} <= ${arr[j + 1]} → No swap`,
+                                result: swapped ? `Swapped: ${arr[j]} ↔ ${arr[j + 1]}` : 'No swap needed',
+                                array: [...arr],
+                                activeIndex: j,
+                                compareIndex: j + 1,
+                                swapped: swapped
+                            });
+                            
+                            if (swapped) {
+                                [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
+                                swaps++;
+                            }
+                        }
+                    }
+                    
+                    return {
+                        iterations,
+                        totalOperations: step - 1,
+                        result: arr,
+                        array: arr,
+                        swaps: swaps
+                    };
+                }
+            },
+            
+            exponential: {
+                name: "O(2ⁿ) - Exponential Time",
+                description: "Fibonacci recursion - each call creates 2 more calls",
+                code: `public int fibonacci(int n) {
+    if (n <= 1) return n;
+    return fibonacci(n - 1) + fibonacci(n - 2);
+}`,
+                execute: function(n) {
+                    const maxN = Math.min(n, 6); // Limit to prevent browser freeze
+                    const iterations = [];
+                    let step = 1;
+                    
+                    function fib(num, depth = 0, path = '') {
+                        const indent = '  '.repeat(depth);
+                        
+                        iterations.push({
+                            step: step++,
+                            description: `${indent}Call: fibonacci(${num})`,
+                            operation: num <= 1 ? `Base case: return ${num}` : `Recursive: fib(${num-1}) + fib(${num-2})`,
+                            result: num <= 1 ? `${num}` : 'Waiting for recursive calls...',
+                            depth: depth,
+                            value: num
+                        });
+                        
+                        if (num <= 1) return num;
+                        
+                        const left = fib(num - 1, depth + 1, path + 'L');
+                        const right = fib(num - 2, depth + 1, path + 'R');
+                        const result = left + right;
+                        
+                        iterations.push({
+                            step: step++,
+                            description: `${indent}Return: fibonacci(${num}) = ${left} + ${right} = ${result}`,
+                            operation: `Combining results`,
+                            result: `${result}`,
+                            depth: depth,
+                            value: num,
+                            isReturn: true
+                        });
+                        
+                        return result;
+                    }
+                    
+                    const result = fib(maxN);
+                    
+                    return {
+                        iterations,
+                        totalOperations: step - 1,
+                        result: result,
+                        note: maxN < n ? `Limited to fibonacci(${maxN}) to prevent browser freeze` : ''
+                    };
+                }
+            }
+        };
+
+        function runDemo() {
+            const n = parseInt(document.getElementById('inputSize').value);
+            const algorithm = document.getElementById('algorithmSelect').value;
+            
+            if (n < 3 || n > 10) {
+                alert('Please enter a value between 3 and 10');
+                return;
+            }
+            
+            currentDemo = algorithms[algorithm].execute(n);
+            displayDemo(algorithm, n);
+        }
+        
+        function resetDemo() {
+            document.getElementById('demoContainer').innerHTML = '';
+            currentDemo = null;
+        }
+        
+        function displayDemo(algorithmKey, n) {
+            const algorithm = algorithms[algorithmKey];
+            const container = document.getElementById('demoContainer');
+            
+            container.innerHTML = `
+                <div class="complexity-demo">
+                    <div class="complexity-title">${algorithm.name}</div>
+                    <div class="code-section">${algorithm.code}</div>
+                    
+                    <div class="stats">
+                        <div class="stat-card">
+                            <div class="stat-number">${n}</div>
+                            <div class="stat-label">Input Size</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">${currentDemo.totalOperations}</div>
+                            <div class="stat-label">Total Operations</div>
+                        </div>
+                        ${currentDemo.swaps ? `
+                        <div class="stat-card">
+                            <div class="stat-number">${currentDemo.swaps}</div>
+                            <div class="stat-label">Swaps Made</div>
+                        </div>
+                        ` : ''}
+                    </div>
+                    
+                    ${currentDemo.array && algorithmKey !== 'exponential' ? `
+                    <div class="array-visualization" id="arrayVis">
+                        ${currentDemo.array.map((val, idx) => `
+                            <div class="array-element" data-index="${idx}">${val}</div>
+                        `).join('')}
+                    </div>
+                    ` : ''}
+                    
+                    <div class="iterations-container">
+                        <h3>Step-by-Step Execution:</h3>
+                        <div id="iterationsList"></div>
+                    </div>
+                    
+                    <div class="result-section">
+                        <strong>Final Result:</strong> ${JSON.stringify(currentDemo.result)}
+                        ${currentDemo.note ? `<br><em>${currentDemo.note}</em>` : ''}
+                    </div>
+                </div>
+            `;
+            
+            animateIterations();
+        }
+        
+        function animateIterations() {
+            const iterationsList = document.getElementById('iterationsList');
+            const arrayVis = document.getElementById('arrayVis');
+            
+            currentDemo.iterations.forEach((iteration, index) => {
+                setTimeout(() => {
+                    const iterationEl = document.createElement('div');
+                    iterationEl.className = 'iteration';
+                    iterationEl.innerHTML = `
+                        <div class="iteration-number">${iteration.step}</div>
+                        <div class="iteration-content">
+                            <div><strong>${iteration.description}</strong></div>
+                            <div>Operation: ${iteration.operation}</div>
+                            <div>Result: ${iteration.result}</div>
+                        </div>
+                    `;
+                    
+                    iterationsList.appendChild(iterationEl);
+                    
+                    // Animate appearance
+                    setTimeout(() => iterationEl.classList.add('show'), 50);
+                    
+                    // Update array visualization
+                    if (arrayVis && iteration.array) {
+                        updateArrayVisualization(iteration);
+                    }
+                    
+                    // Scroll to current iteration
+                    iterationEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    
+                }, index * animationSpeed);
+            });
+        }
+        
+        function updateArrayVisualization(iteration) {
+            const elements = document.querySelectorAll('.array-element');
+            
+            // Reset all elements
+            elements.forEach(el => {
+                el.className = 'array-element';
+                el.textContent = iteration.array[parseInt(el.dataset.index)];
+            });
+            
+            // Highlight active elements
+            if (iteration.activeIndex !== undefined) {
+                elements[iteration.activeIndex]?.classList.add('active');
+            }
+            if (iteration.compareIndex !== undefined) {
+                elements[iteration.compareIndex]?.classList.add('compared');
+            }
+            if (iteration.activeRange) {
+                for (let i = iteration.activeRange[0]; i <= iteration.activeRange[1]; i++) {
+                    elements[i]?.classList.add('active');
+                }
+            }
+        }
+        
+        // Initialize with default demo
+        document.addEventListener('DOMContentLoaded', () => {
+            runDemo();
+        });
+    </script>
+</body>
+</html>
