@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Time Complexity Iterations Demo</title>
+    <title>Time Complexity Analysis</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <style>
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Arial', sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             margin: 0;
             padding: 20px;
@@ -14,7 +15,7 @@
         }
         
         .container {
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto;
             background: rgba(255, 255, 255, 0.95);
             border-radius: 20px;
@@ -27,298 +28,180 @@
             color: #4a5568;
             margin-bottom: 30px;
             font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
         }
+        
+        .chart-container {
+            position: relative;
+            height: 500px;
+            margin: 30px 0;
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .complexity-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .complexity-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border-radius: 15px;
+            padding: 25px;
+            color: white;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .complexity-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .complexity-card h3 {
+            margin: 0 0 15px 0;
+            font-size: 1.4em;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+        }
+        
+        .complexity-card .description {
+            margin: 10px 0;
+            font-size: 0.95em;
+            opacity: 0.9;
+        }
+        
+        .code-block {
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            font-family: 'Fira Code', 'Courier New', monospace;
+            font-size: 0.9em;
+            line-height: 1.6;
+            overflow-x: auto;
+            color: #f8f8f2;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        
+        .code-block .keyword { color: #ff79c6; font-weight: bold; }
+        .code-block .string { color: #f1fa8c; }
+        .code-block .comment { color: #6272a4; font-style: italic; }
+        .code-block .number { color: #bd93f9; }
+        .code-block .method { color: #50fa7b; }
         
         .controls {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 20px;
-            margin: 30px 0;
-            flex-wrap: wrap;
+            text-align: center;
+            margin: 20px 0;
         }
         
-        .input-group {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .input-group input, .input-group select {
-            padding: 10px;
-            border: 2px solid #667eea;
-            border-radius: 10px;
-            font-size: 1em;
-        }
-        
-        .demo-button {
+        .control-button {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
             padding: 12px 24px;
+            margin: 0 10px;
             border-radius: 25px;
             cursor: pointer;
             font-size: 1em;
             transition: all 0.3s ease;
         }
         
-        .demo-button:hover {
+        .control-button:hover {
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
         
-        .complexity-demo {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            margin: 20px 0;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-            border-left: 5px solid #667eea;
-        }
-        
-        .complexity-title {
-            font-size: 1.5em;
-            font-weight: bold;
-            color: #4a5568;
-            margin-bottom: 15px;
-        }
-        
-        .code-section {
-            background: #1e1e1e;
-            border-radius: 10px;
-            padding: 20px;
-            margin: 15px 0;
-            font-family: 'Fira Code', 'Courier New', monospace;
-            font-size: 0.95em;
-            border: 1px solid #333;
-            color: #f8f8f2;
-            line-height: 1.6;
-            overflow-x: auto;
-            white-space: pre-wrap;
-        }
-        
-        .code-section .keyword { color: #ff79c6; font-weight: bold; }
-        .code-section .string { color: #f1fa8c; }
-        .code-section .comment { color: #6272a4; font-style: italic; }
-        .code-section .number { color: #bd93f9; }
-        .code-section .method { color: #50fa7b; }
-        
-        .iterations-container {
-            background: #fff5f5;
-            border-radius: 10px;
-            padding: 20px;
-            margin: 15px 0;
-            border: 1px solid #fed7d7;
-            max-height: 400px;
-            overflow-y: auto;
-        }
-        
-        .iteration {
-            display: flex;
-            align-items: center;
-            padding: 8px 12px;
-            margin: 5px 0;
-            background: white;
-            border-radius: 8px;
-            border-left: 4px solid #667eea;
-            transition: all 0.3s ease;
-            opacity: 0;
-            transform: translateX(-20px);
-        }
-        
-        .iteration.show {
-            opacity: 1;
-            transform: translateX(0);
-        }
-        
-        .iteration-number {
-            background: #667eea;
-            color: white;
-            border-radius: 50%;
-            width: 25px;
-            height: 25px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.8em;
-            font-weight: bold;
-            margin-right: 15px;
-            flex-shrink: 0;
-        }
-        
-        .iteration-content {
-            flex: 1;
-            font-family: 'Courier New', monospace;
-            font-size: 0.85em;
-        }
-        
-        .result-section {
-            background: #f0fff4;
-            border-radius: 10px;
-            padding: 15px;
-            margin: 15px 0;
-            border: 1px solid #9ae6b4;
-        }
-        
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin: 20px 0;
-        }
-        
-        .stat-card {
+        .control-button.active {
             background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            color: white;
-            padding: 15px;
-            border-radius: 10px;
+        }
+        
+        .input-size {
+            margin: 20px 0;
             text-align: center;
         }
         
-        .stat-number {
-            font-size: 2em;
+        .input-size input {
+            padding: 8px;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            margin: 0 10px;
+            font-size: 1em;
+        }
+        
+        .performance-indicator {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
             font-weight: bold;
+            margin-left: 10px;
         }
         
-        .stat-label {
-            font-size: 0.9em;
-            opacity: 0.9;
-        }
-        
-        .highlight {
-            background: #fef5e7 !important;
-            border-left-color: #f6ad55 !important;
-        }
-        
-        .speed-controls {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin: 20px 0;
-        }
-        
-        .speed-slider {
-            flex: 1;
-            max-width: 200px;
-        }
-        
-        .array-visualization {
-            display: flex;
-            gap: 5px;
-            margin: 10px 0;
-            flex-wrap: wrap;
-        }
-        
-        .array-element {
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #e2e8f0;
-            border: 2px solid #cbd5e0;
-            border-radius: 5px;
-            font-weight: bold;
-            transition: all 0.3s ease;
-        }
-        
-        .array-element.active {
-            background: #667eea;
-            color: white;
-            transform: scale(1.1);
-        }
-        
-        .array-element.compared {
-            background: #f6ad55;
-            color: white;
-        }
-        
-        .array-element.found {
-            background: #48bb78;
-            color: white;
-        }
+        .excellent { background: #48bb78; color: white; }
+        .good { background: #ed8936; color: white; }
+        .bad { background: #f56565; color: white; }
+        .terrible { background: #9f1239; color: white; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🔍 Time Complexity Step-by-Step Iterations</h1>
+        <h1>🚀 Time Complexity Analysis</h1>
         
         <div class="controls">
-            <div class="input-group">
-                <label>Input Size (n):</label>
-                <input type="number" id="inputSize" value="8" min="3" max="10">
-            </div>
-            <div class="input-group">
-                <label>Algorithm:</label>
-                <select id="algorithmSelect">
-                    <option value="constant">O(1) - Array Access</option>
-                    <option value="logarithmic">O(log n) - Binary Search</option>
-                    <option value="linear">O(n) - Linear Search</option>
-                    <option value="linearithmic">O(n log n) - Merge Sort</option>
-                    <option value="quadratic">O(n²) - Bubble Sort</option>
-                    <option value="exponential">O(2ⁿ) - Fibonacci</option>
-                </select>
-            </div>
-            <button class="demo-button" onclick="runDemo()">▶️ Run Demo</button>
-            <button class="demo-button" onclick="resetDemo()">🔄 Reset</button>
+            <button class="control-button active" onclick="showAllComplexities()">Show All</button>
+            <button class="control-button" onclick="showGoodComplexities()">Good Performance</button>
+            <button class="control-button" onclick="showBadComplexities()">Poor Performance</button>
         </div>
         
-        <div class="speed-controls">
-            <label>Animation Speed:</label>
-            <input type="range" class="speed-slider" id="speedSlider" min="100" max="2000" value="800">
-            <span id="speedDisplay">800ms</span>
+        <div class="input-size">
+            <label>Input Size (n): </label>
+            <input type="number" id="inputSize" value="10" min="1" max="20" onchange="updateGraph()">
+            <span id="sizeDisplay">n = 10</span>
         </div>
         
-        <div id="demoContainer"></div>
+        <div class="chart-container">
+            <canvas id="complexityChart"></canvas>
+        </div>
+        
+        <div class="complexity-grid" id="complexityGrid">
+            <!-- Cards will be generated by JavaScript -->
+        </div>
     </div>
 
     <script>
-        let currentDemo = null;
-        let animationSpeed = 800;
-        
-        document.getElementById('speedSlider').addEventListener('input', function() {
-            animationSpeed = parseInt(this.value);
-            document.getElementById('speedDisplay').textContent = animationSpeed + 'ms';
-        });
+        const complexities = [
+            {
+                name: "O(1) - Constant",
+                color: "#48bb78",
+                performance: "excellent",
+                description: "Always takes the same time regardless of input size",
+                code: `<span class="comment">// Array access by index</span>
+<span class="keyword">public int</span> <span class="method">getFirstElement</span>(<span class="keyword">int</span>[] arr) {
+    <span class="keyword">return</span> arr[<span class="number">0</span>];  <span class="comment">// Always 1 operation</span>
+}
 
-        const algorithms = {
-            constant: {
-                name: "O(1) - Constant Time",
-                description: "Array access by index - always 1 operation",
-                code: `<span class="keyword">public int</span> <span class="method">getElement</span>(<span class="keyword">int</span>[] arr, <span class="keyword">int</span> index) {
-    <span class="keyword">return</span> arr[index];  <span class="comment">// Direct access - always O(1)</span>
+<span class="comment">// HashMap lookup</span>
+<span class="keyword">public</span> String <span class="method">getValue</span>(Map&lt;String, String&gt; map, String key) {
+    <span class="keyword">return</span> map.<span class="method">get</span>(key);  <span class="comment">// Average O(1)</span>
 }`,
-                execute: function(n) {
-                    const arr = Array.from({length: n}, (_, i) => i * 2 + 1);
-                    const targetIndex = 3;
-                    const iterations = [];
-                    
-                    iterations.push({
-                        step: 1,
-                        description: `Accessing arr[${targetIndex}] directly`,
-                        operation: `return arr[${targetIndex}]`,
-                        result: arr[targetIndex],
-                        array: arr,
-                        activeIndex: targetIndex
-                    });
-                    
-                    return {
-                        iterations,
-                        totalOperations: 1,
-                        result: arr[targetIndex],
-                        array: arr
-                    };
-                }
+                calculate: (n) => 1
             },
-            
-            logarithmic: {
-                name: "O(log n) - Logarithmic Time",
-                description: "Binary search - divides search space in half each step",
-                code: `<span class="keyword">public int</span> <span class="method">binarySearch</span>(<span class="keyword">int</span>[] arr, <span class="keyword">int</span> target) {
+            {
+                name: "O(log n) - Logarithmic",
+                color: "#38a169",
+                performance: "excellent",
+                description: "Divides problem in half each step (like binary search)",
+                code: `<span class="comment">// Binary search in sorted array</span>
+<span class="keyword">public int</span> <span class="method">binarySearch</span>(<span class="keyword">int</span>[] arr, <span class="keyword">int</span> target) {
     <span class="keyword">int</span> left = <span class="number">0</span>, right = arr.length - <span class="number">1</span>;
     
     <span class="keyword">while</span> (left &lt;= right) {
-        <span class="keyword">int</span> mid = (left + right) / <span class="number">2</span>;
+        <span class="keyword">int</span> mid = left + (right - left) / <span class="number">2</span>;
         
         <span class="keyword">if</span> (arr[mid] == target) 
             <span class="keyword">return</span> mid;
@@ -330,185 +213,90 @@
     }
     <span class="keyword">return</span> -<span class="number">1</span>;
 }`,
-                execute: function(n) {
-                    const arr = Array.from({length: n}, (_, i) => i * 2 + 1);
-                    const target = arr[Math.floor(n * 0.7)]; // Target near end
-                    const iterations = [];
-                    
-                    let left = 0, right = n - 1;
-                    let step = 1;
-                    
-                    while (left <= right) {
-                        const mid = Math.floor((left + right) / 2);
-                        iterations.push({
-                            step: step++,
-                            description: `Check middle: left=${left}, right=${right}, mid=${mid}`,
-                            operation: `arr[${mid}] = ${arr[mid]} ${arr[mid] === target ? '==' : arr[mid] < target ? '<' : '>'} ${target}`,
-                            result: arr[mid] === target ? `Found at index ${mid}` : arr[mid] < target ? 'Search right half' : 'Search left half',
-                            array: arr,
-                            activeIndex: mid,
-                            left: left,
-                            right: right
-                        });
-                        
-                        if (arr[mid] === target) {
-                            return {
-                                iterations,
-                                totalOperations: step - 1,
-                                result: mid,
-                                array: arr
-                            };
-                        }
-                        
-                        if (arr[mid] < target) left = mid + 1;
-                        else right = mid - 1;
-                    }
-                    
-                    return {
-                        iterations,
-                        totalOperations: step - 1,
-                        result: -1,
-                        array: arr
-                    };
-                }
+                calculate: (n) => Math.log2(n)
             },
-            
-            linear: {
-                name: "O(n) - Linear Time",
-                description: "Linear search - check each element once",
-                code: `<span class="keyword">public int</span> <span class="method">linearSearch</span>(<span class="keyword">int</span>[] arr, <span class="keyword">int</span> target) {
-    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; arr.length; i++) {
-        <span class="keyword">if</span> (arr[i] == target) {
-            <span class="keyword">return</span> i;
+            {
+                name: "O(√n) - Square Root",
+                color: "#68d391",
+                performance: "good",
+                description: "Often seen in optimized algorithms",
+                code: `<span class="comment">// Check if number is prime (optimized)</span>
+<span class="keyword">public boolean</span> <span class="method">isPrime</span>(<span class="keyword">int</span> n) {
+    <span class="keyword">if</span> (n &lt;= <span class="number">1</span>) 
+        <span class="keyword">return false</span>;
+    
+    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">2</span>; i &lt;= Math.<span class="method">sqrt</span>(n); i++) {
+        <span class="keyword">if</span> (n % i == <span class="number">0</span>) 
+            <span class="keyword">return false</span>;
+    }
+    <span class="keyword">return true</span>;
+}`,
+                calculate: (n) => Math.sqrt(n)
+            },
+            {
+                name: "O(n) - Linear",
+                color: "#ed8936",
+                performance: "good",
+                description: "Processes each element once",
+                code: `<span class="comment">// Find maximum element</span>
+<span class="keyword">public int</span> <span class="method">findMax</span>(<span class="keyword">int</span>[] arr) {
+    <span class="keyword">int</span> max = arr[<span class="number">0</span>];
+    
+    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; arr.length; i++) {
+        <span class="keyword">if</span> (arr[i] &gt; max) {
+            max = arr[i];
         }
     }
-    <span class="keyword">return</span> -<span class="number">1</span>;
+    <span class="keyword">return</span> max;
 }`,
-                execute: function(n) {
-                    const arr = Array.from({length: n}, (_, i) => i * 3 + 2);
-                    const target = arr[Math.floor(n * 0.7)]; // Target near end
-                    const iterations = [];
-                    
-                    for (let i = 0; i < n; i++) {
-                        iterations.push({
-                            step: i + 1,
-                            description: `Checking element at index ${i}`,
-                            operation: `arr[${i}] = ${arr[i]} ${arr[i] === target ? '==' : '!='} ${target}`,
-                            result: arr[i] === target ? `Found at index ${i}` : 'Continue searching',
-                            array: arr,
-                            activeIndex: i
-                        });
-                        
-                        if (arr[i] === target) {
-                            return {
-                                iterations,
-                                totalOperations: i + 1,
-                                result: i,
-                                array: arr
-                            };
-                        }
-                    }
-                    
-                    return {
-                        iterations,
-                        totalOperations: n,
-                        result: -1,
-                        array: arr
-                    };
-                }
+                calculate: (n) => n
             },
-            
-            linearithmic: {
-                name: "O(n log n) - Linearithmic Time",
-                description: "Merge sort - divide and conquer approach",
-                code: `<span class="keyword">public void</span> <span class="method">mergeSort</span>(<span class="keyword">int</span>[] arr, <span class="keyword">int</span> left, <span class="keyword">int</span> right) {
+            {
+                name: "O(n log n) - Linearithmic",
+                color: "#dd6b20",
+                performance: "good",
+                description: "Efficient sorting algorithms (merge sort, heap sort)",
+                code: `<span class="comment">// Merge Sort</span>
+<span class="keyword">public void</span> <span class="method">mergeSort</span>(<span class="keyword">int</span>[] arr, <span class="keyword">int</span> left, <span class="keyword">int</span> right) {
     <span class="keyword">if</span> (left &lt; right) {
         <span class="keyword">int</span> mid = (left + right) / <span class="number">2</span>;
         
-        <span class="method">mergeSort</span>(arr, left, mid);
-        <span class="method">mergeSort</span>(arr, mid + <span class="number">1</span>, right);
-        <span class="method">merge</span>(arr, left, mid, right);
+        <span class="method">mergeSort</span>(arr, left, mid);       <span class="comment">// Divide</span>
+        <span class="method">mergeSort</span>(arr, mid + <span class="number">1</span>, right);  <span class="comment">// Divide</span>
+        <span class="method">merge</span>(arr, left, mid, right);    <span class="comment">// Conquer</span>
     }
 }`,
-                execute: function(n) {
-                    const arr = [64, 34, 25, 12, 22, 11, 90, 88].slice(0, n);
-                    const iterations = [];
-                    let step = 1;
-                    
-                    function mergeSort(arr, left, right, depth = 0) {
-                        if (left < right) {
-                            const mid = Math.floor((left + right) / 2);
-                            
-                            iterations.push({
-                                step: step++,
-                                description: `Divide: [${left}..${right}] into [${left}..${mid}] and [${mid + 1}..${right}]`,
-                                operation: `Split array at position ${mid}`,
-                                result: `Left: ${arr.slice(left, mid + 1)}, Right: ${arr.slice(mid + 1, right + 1)}`,
-                                array: [...arr],
-                                activeRange: [left, right],
-                                depth: depth
-                            });
-                            
-                            mergeSort(arr, left, mid, depth + 1);
-                            mergeSort(arr, mid + 1, right, depth + 1);
-                            merge(arr, left, mid, right, depth);
-                        }
-                    }
-                    
-                    function merge(arr, left, mid, right, depth) {
-                        const leftArr = arr.slice(left, mid + 1);
-                        const rightArr = arr.slice(mid + 1, right + 1);
-                        
-                        iterations.push({
-                            step: step++,
-                            description: `Merge: [${leftArr}] and [${rightArr}]`,
-                            operation: `Merging sorted subarrays`,
-                            result: `Merging in progress...`,
-                            array: [...arr],
-                            activeRange: [left, right],
-                            depth: depth
-                        });
-                        
-                        let i = 0, j = 0, k = left;
-                        while (i < leftArr.length && j < rightArr.length) {
-                            if (leftArr[i] <= rightArr[j]) {
-                                arr[k++] = leftArr[i++];
-                            } else {
-                                arr[k++] = rightArr[j++];
-                            }
-                        }
-                        
-                        while (i < leftArr.length) arr[k++] = leftArr[i++];
-                        while (j < rightArr.length) arr[k++] = rightArr[j++];
-                        
-                        iterations.push({
-                            step: step++,
-                            description: `Merged result: [${arr.slice(left, right + 1)}]`,
-                            operation: `Merge complete`,
-                            result: `Sorted section: ${arr.slice(left, right + 1)}`,
-                            array: [...arr],
-                            activeRange: [left, right],
-                            depth: depth
-                        });
-                    }
-                    
-                    mergeSort(arr, 0, arr.length - 1);
-                    
-                    return {
-                        iterations,
-                        totalOperations: step - 1,
-                        result: arr,
-                        array: arr
-                    };
-                }
+                calculate: (n) => n * Math.log2(n)
             },
-            
-            quadratic: {
-                name: "O(n²) - Quadratic Time",
-                description: "Bubble sort - nested loops comparing adjacent elements",
-                code: `<span class="keyword">public void</span> <span class="method">bubbleSort</span>(<span class="keyword">int</span>[] arr) {
-    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; arr.length - <span class="number">1</span>; i++) {
-        <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; arr.length - i - <span class="number">1</span>; j++) {
+            {
+                name: "O(n√n) - Polynomial",
+                color: "#c05621",
+                performance: "bad",
+                description: "Between linear and quadratic",
+                code: `<span class="comment">// Example: For each element, do sqrt(n) operations</span>
+<span class="keyword">public void</span> <span class="method">complexOperation</span>(<span class="keyword">int</span>[] arr) {
+    <span class="keyword">int</span> n = arr.length;
+    
+    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; n; i++) {              <span class="comment">// O(n)</span>
+        <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; Math.<span class="method">sqrt</span>(n); j++) {  <span class="comment">// O(√n)</span>
+            <span class="comment">// Some operation</span>
+            arr[i] += j;
+        }
+    }
+}`,
+                calculate: (n) => n * Math.sqrt(n)
+            },
+            {
+                name: "O(n²) - Quadratic",
+                color: "#f56565",
+                performance: "bad",
+                description: "Nested loops over same data",
+                code: `<span class="comment">// Bubble Sort</span>
+<span class="keyword">public void</span> <span class="method">bubbleSort</span>(<span class="keyword">int</span>[] arr) {
+    <span class="keyword">int</span> n = arr.length;
+    
+    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; n - <span class="number">1</span>; i++) {         <span class="comment">// O(n)</span>
+        <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; n - i - <span class="number">1</span>; j++) {  <span class="comment">// O(n)</span>
             <span class="keyword">if</span> (arr[j] &gt; arr[j + <span class="number">1</span>]) {
                 <span class="comment">// Swap elements</span>
                 <span class="keyword">int</span> temp = arr[j];
@@ -518,229 +306,231 @@
         }
     }
 }`,
-                execute: function(n) {
-                    const arr = [64, 34, 25, 12, 22, 11, 90, 88].slice(0, n);
-                    const iterations = [];
-                    let step = 1;
-                    let swaps = 0;
-                    
-                    for (let i = 0; i < n - 1; i++) {
-                        for (let j = 0; j < n - i - 1; j++) {
-                            const swapped = arr[j] > arr[j + 1];
-                            
-                            iterations.push({
-                                step: step++,
-                                description: `Pass ${i + 1}: Compare arr[${j}] = ${arr[j]} with arr[${j + 1}] = ${arr[j + 1]}`,
-                                operation: swapped ? `${arr[j]} > ${arr[j + 1]} → Swap` : `${arr[j]} <= ${arr[j + 1]} → No swap`,
-                                result: swapped ? `Swapped: ${arr[j]} ↔ ${arr[j + 1]}` : 'No swap needed',
-                                array: [...arr],
-                                activeIndex: j,
-                                compareIndex: j + 1,
-                                swapped: swapped
-                            });
-                            
-                            if (swapped) {
-                                [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
-                                swaps++;
-                            }
-                        }
-                    }
-                    
-                    return {
-                        iterations,
-                        totalOperations: step - 1,
-                        result: arr,
-                        array: arr,
-                        swaps: swaps
-                    };
-                }
+                calculate: (n) => n * n
             },
-            
-            exponential: {
-                name: "O(2ⁿ) - Exponential Time",
-                description: "Fibonacci recursion - each call creates 2 more calls",
-                code: `<span class="keyword">public int</span> <span class="method">fibonacci</span>(<span class="keyword">int</span> n) {
+            {
+                name: "O(n³) - Cubic",
+                color: "#e53e3e",
+                performance: "terrible",
+                description: "Three nested loops",
+                code: `<span class="comment">// Matrix multiplication (naive approach)</span>
+<span class="keyword">public int</span>[][] <span class="method">matrixMultiply</span>(<span class="keyword">int</span>[][] A, <span class="keyword">int</span>[][] B) {
+    <span class="keyword">int</span> n = A.length;
+    <span class="keyword">int</span>[][] C = <span class="keyword">new int</span>[n][n];
+    
+    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; n; i++) {       <span class="comment">// O(n)</span>
+        <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; n; j++) {   <span class="comment">// O(n)</span>
+            <span class="keyword">for</span> (<span class="keyword">int</span> k = <span class="number">0</span>; k &lt; n; k++) { <span class="comment">// O(n)</span>
+                C[i][j] += A[i][k] * B[k][j];
+            }
+        }
+    }
+    <span class="keyword">return</span> C;
+}`,
+                calculate: (n) => n * n * n
+            },
+            {
+                name: "O(2ⁿ) - Exponential",
+                color: "#c53030",
+                performance: "terrible",
+                description: "Each step doubles the work (recursive without memoization)",
+                code: `<span class="comment">// Fibonacci (naive recursive)</span>
+<span class="keyword">public int</span> <span class="method">fibonacci</span>(<span class="keyword">int</span> n) {
     <span class="keyword">if</span> (n &lt;= <span class="number">1</span>) 
         <span class="keyword">return</span> n;
-        
+    
     <span class="keyword">return</span> <span class="method">fibonacci</span>(n - <span class="number">1</span>) + <span class="method">fibonacci</span>(n - <span class="number">2</span>);
+    <span class="comment">// Each call creates 2 more calls!</span>
 }`,
-                execute: function(n) {
-                    const maxN = Math.min(n, 6); // Limit to prevent browser freeze
-                    const iterations = [];
-                    let step = 1;
-                    
-                    function fib(num, depth = 0, path = '') {
-                        const indent = '  '.repeat(depth);
-                        
-                        iterations.push({
-                            step: step++,
-                            description: `${indent}Call: fibonacci(${num})`,
-                            operation: num <= 1 ? `Base case: return ${num}` : `Recursive: fib(${num-1}) + fib(${num-2})`,
-                            result: num <= 1 ? `${num}` : 'Waiting for recursive calls...',
-                            depth: depth,
-                            value: num
-                        });
-                        
-                        if (num <= 1) return num;
-                        
-                        const left = fib(num - 1, depth + 1, path + 'L');
-                        const right = fib(num - 2, depth + 1, path + 'R');
-                        const result = left + right;
-                        
-                        iterations.push({
-                            step: step++,
-                            description: `${indent}Return: fibonacci(${num}) = ${left} + ${right} = ${result}`,
-                            operation: `Combining results`,
-                            result: `${result}`,
-                            depth: depth,
-                            value: num,
-                            isReturn: true
-                        });
-                        
-                        return result;
-                    }
-                    
-                    const result = fib(maxN);
-                    
-                    return {
-                        iterations,
-                        totalOperations: step - 1,
-                        result: result,
-                        note: maxN < n ? `Limited to fibonacci(${maxN}) to prevent browser freeze` : ''
-                    };
-                }
+                calculate: (n) => Math.pow(2, n)
+            },
+            {
+                name: "O(n!) - Factorial",
+                color: "#9f1239",
+                performance: "terrible",
+                description: "Trying all possible arrangements",
+                code: `<span class="comment">// Generate all permutations</span>
+<span class="keyword">public void</span> <span class="method">generatePermutations</span>(List&lt;Integer&gt; nums, 
+                                List&lt;Integer&gt; current) {
+    <span class="keyword">if</span> (current.<span class="method">size</span>() == nums.<span class="method">size</span>()) {
+        <span class="comment">// Process permutation</span>
+        <span class="keyword">return</span>;
+    }
+    
+    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; nums.<span class="method">size</span>(); i++) {
+        <span class="keyword">if</span> (!current.<span class="method">contains</span>(nums.<span class="method">get</span>(i))) {
+            current.<span class="method">add</span>(nums.<span class="method">get</span>(i));
+            <span class="method">generatePermutations</span>(nums, current);
+            current.<span class="method">remove</span>(current.<span class="method">size</span>() - <span class="number">1</span>);
+        }
+    }
+}`,
+                calculate: (n) => factorial(n)
+            },
+            {
+                name: "O(nⁿ) - Polynomial Exponential",
+                color: "#742a2a",
+                performance: "terrible",
+                description: "Worst possible complexity",
+                code: `<span class="comment">// Extremely inefficient algorithm</span>
+<span class="keyword">public void</span> <span class="method">worstCase</span>(<span class="keyword">int</span> n) {
+    <span class="keyword">if</span> (n &lt;= <span class="number">0</span>) 
+        <span class="keyword">return</span>;
+    
+    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; n; i++) {  <span class="comment">// O(n)</span>
+        <span class="method">worstCase</span>(n);              <span class="comment">// Called n times</span>
+    }
+    <span class="comment">// This creates n^n recursive calls!</span>
+}`,
+                calculate: (n) => Math.pow(n, n)
             }
-        };
+        ];
 
-        function runDemo() {
-            const n = parseInt(document.getElementById('inputSize').value);
-            const algorithm = document.getElementById('algorithmSelect').value;
-            
-            if (n < 3 || n > 10) {
-                alert('Please enter a value between 3 and 10');
-                return;
+        function factorial(n) {
+            if (n <= 1) return 1;
+            let result = 1;
+            for (let i = 2; i <= n; i++) {
+                result *= i;
             }
-            
-            currentDemo = algorithms[algorithm].execute(n);
-            displayDemo(algorithm, n);
+            return result;
         }
-        
-        function resetDemo() {
-            document.getElementById('demoContainer').innerHTML = '';
-            currentDemo = null;
-        }
-        
-        function displayDemo(algorithmKey, n) {
-            const algorithm = algorithms[algorithmKey];
-            const container = document.getElementById('demoContainer');
-            
-            container.innerHTML = `
-                <div class="complexity-demo">
-                    <div class="complexity-title">${algorithm.name}</div>
-                    <div class="code-section">${algorithm.code}</div>
-                    
-                    <div class="stats">
-                        <div class="stat-card">
-                            <div class="stat-number">${n}</div>
-                            <div class="stat-label">Input Size</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-number">${currentDemo.totalOperations}</div>
-                            <div class="stat-label">Total Operations</div>
-                        </div>
-                        ${currentDemo.swaps ? `
-                        <div class="stat-card">
-                            <div class="stat-number">${currentDemo.swaps}</div>
-                            <div class="stat-label">Swaps Made</div>
-                        </div>
-                        ` : ''}
-                    </div>
-                    
-                    ${currentDemo.array && algorithmKey !== 'exponential' ? `
-                    <div class="array-visualization" id="arrayVis">
-                        ${currentDemo.array.map((val, idx) => `
-                            <div class="array-element" data-index="${idx}">${val}</div>
-                        `).join('')}
-                    </div>
-                    ` : ''}
-                    
-                    <div class="iterations-container">
-                        <h3>Step-by-Step Execution:</h3>
-                        <div id="iterationsList"></div>
-                    </div>
-                    
-                    <div class="result-section">
-                        <strong>Final Result:</strong> ${JSON.stringify(currentDemo.result)}
-                        ${currentDemo.note ? `<br><em>${currentDemo.note}</em>` : ''}
-                    </div>
-                </div>
-            `;
-            
-            animateIterations();
-        }
-        
-        function animateIterations() {
-            const iterationsList = document.getElementById('iterationsList');
-            const arrayVis = document.getElementById('arrayVis');
-            
-            currentDemo.iterations.forEach((iteration, index) => {
-                setTimeout(() => {
-                    const iterationEl = document.createElement('div');
-                    iterationEl.className = 'iteration';
-                    iterationEl.innerHTML = `
-                        <div class="iteration-number">${iteration.step}</div>
-                        <div class="iteration-content">
-                            <div><strong>${iteration.description}</strong></div>
-                            <div>Operation: ${iteration.operation}</div>
-                            <div>Result: ${iteration.result}</div>
-                        </div>
-                    `;
-                    
-                    iterationsList.appendChild(iterationEl);
-                    
-                    // Animate appearance
-                    setTimeout(() => iterationEl.classList.add('show'), 50);
-                    
-                    // Update array visualization
-                    if (arrayVis && iteration.array) {
-                        updateArrayVisualization(iteration);
+
+        let chart;
+
+        function initChart() {
+            const ctx = document.getElementById('complexityChart').getContext('2d');
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: []
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Time Complexity Growth Comparison',
+                            font: { size: 16, weight: 'bold' }
+                        },
+                        legend: {
+                            display: true,
+                            position: 'right'
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Input Size (n)'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Operations'
+                            },
+                            type: 'logarithmic'
+                        }
+                    },
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
                     }
-                    
-                    // Scroll to current iteration
-                    iterationEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                    
-                }, index * animationSpeed);
-            });
-        }
-        
-        function updateArrayVisualization(iteration) {
-            const elements = document.querySelectorAll('.array-element');
-            
-            // Reset all elements
-            elements.forEach(el => {
-                el.className = 'array-element';
-                el.textContent = iteration.array[parseInt(el.dataset.index)];
-            });
-            
-            // Highlight active elements
-            if (iteration.activeIndex !== undefined) {
-                elements[iteration.activeIndex]?.classList.add('active');
-            }
-            if (iteration.compareIndex !== undefined) {
-                elements[iteration.compareIndex]?.classList.add('compared');
-            }
-            if (iteration.activeRange) {
-                for (let i = iteration.activeRange[0]; i <= iteration.activeRange[1]; i++) {
-                    elements[i]?.classList.add('active');
                 }
-            }
+            });
         }
-        
-        // Initialize with default demo
-        document.addEventListener('DOMContentLoaded', () => {
-            runDemo();
+
+        function updateGraph() {
+            const n = parseInt(document.getElementById('inputSize').value);
+            document.getElementById('sizeDisplay').textContent = `n = ${n}`;
+            
+            const maxN = Math.min(n, 15); // Limit to prevent overflow
+            const labels = [];
+            for (let i = 1; i <= maxN; i++) {
+                labels.push(i);
+            }
+
+            const datasets = complexities.map(complexity => {
+                const data = labels.map(size => {
+                    let value = complexity.calculate(size);
+                    // Cap exponential growth for visualization
+                    if (complexity.name.includes('2ⁿ') && size > 10) value = Math.pow(2, 10);
+                    if (complexity.name.includes('n!') && size > 8) value = factorial(8);
+                    if (complexity.name.includes('nⁿ') && size > 5) value = Math.pow(5, 5);
+                    return Math.min(value, 1000000); // Cap at 1M for visualization
+                });
+
+                return {
+                    label: complexity.name,
+                    data: data,
+                    borderColor: complexity.color,
+                    backgroundColor: complexity.color + '20',
+                    tension: 0.3,
+                    pointRadius: 3,
+                    pointHoverRadius: 6
+                };
+            });
+
+            chart.data.labels = labels;
+            chart.data.datasets = datasets;
+            chart.update();
+        }
+
+        function createComplexityCards() {
+            const grid = document.getElementById('complexityGrid');
+            grid.innerHTML = '';
+
+            complexities.forEach(complexity => {
+                const card = document.createElement('div');
+                card.className = 'complexity-card';
+                card.innerHTML = `
+                    <h3>${complexity.name} <span class="performance-indicator ${complexity.performance}">${complexity.performance.toUpperCase()}</span></h3>
+                    <div class="description">${complexity.description}</div>
+                    <div class="code-block">${complexity.code}</div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function showAllComplexities() {
+            document.querySelectorAll('.complexity-card').forEach(card => card.style.display = 'block');
+            updateActiveButton(0);
+        }
+
+        function showGoodComplexities() {
+            document.querySelectorAll('.complexity-card').forEach((card, index) => {
+                const performance = complexities[index].performance;
+                card.style.display = (performance === 'excellent' || performance === 'good') ? 'block' : 'none';
+            });
+            updateActiveButton(1);
+        }
+
+        function showBadComplexities() {
+            document.querySelectorAll('.complexity-card').forEach((card, index) => {
+                const performance = complexities[index].performance;
+                card.style.display = (performance === 'bad' || performance === 'terrible') ? 'block' : 'none';
+            });
+            updateActiveButton(2);
+        }
+
+        function updateActiveButton(activeIndex) {
+            document.querySelectorAll('.control-button').forEach((btn, index) => {
+                btn.classList.toggle('active', index === activeIndex);
+            });
+        }
+
+        // Initialize everything
+        document.addEventListener('DOMContentLoaded', function() {
+            initChart();
+            createComplexityCards();
+            updateGraph();
         });
     </script>
+
+    <!-- GoatCounter Analytics - Replace 'YOUR-SITE-NAME' with your actual GoatCounter site name -->
+    <script data-goatcounter="https://time-complexity-visualizer.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>
